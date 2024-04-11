@@ -92,7 +92,7 @@ def validarDataPortal(cidade):
             
         else:
             dados.append(False)
-         
+            
     if erro:
         print("Mandar email para prefeitura de " + dados[4]) if dados[3] == 'p' else print("Mandar email para camara de " + dados[4])
         enviarEmail(cidade)
@@ -116,29 +116,28 @@ def enviarEmail(cidade):
             
         print(ultimaDataReceita + ultimaDespesa + ultimaServidor)
             
-        # sender = 'natanael@digimax.com.br'
-        # sender_title = "Digimax"
-        # recipient = cidade[0][1]
+        sender = 'natanael@digimax.com.br'
+        sender_title = "Digimax"
+        recipient = cidade[0][1]
         
-        # msg = MIMEText( ultimaDataReceita  + ultimaDespesa +  ultimaServidor, 'plain', 'utf-8')
-        # msg['Subject'] =  Header("PORTAL DE TRANSPARENCIA DA " + ("PREFEITURA " if cidade[0][3] == 'p' else 'CAMARA ') + ('DE ' + cidade[0][4]) + ' ' + str(hoje.strftime("%d/%m/%Y")), 'utf-8')
-        # msg['From'] = formataddr((str(Header(sender_title, 'utf-8')), sender))
-        # msg['To'] = recipient
+        msg = MIMEText( ultimaDataReceita  + ultimaDespesa +  ultimaServidor, 'plain', 'utf-8')
+        msg['Subject'] =  Header("PORTAL DE TRANSPARENCIA DA " + ("PREFEITURA " if cidade[0][3] == 'p' else 'CAMARA ') + ('DE ' + cidade[0][4]) + ' ' + str(hoje.strftime("%d/%m/%Y")), 'utf-8')
+        msg['From'] = formataddr((str(Header(sender_title, 'utf-8')), sender))
+        msg['To'] = recipient
 
-        # server = smtplib.SMTP_SSL('smtp.zoho.com', 465)
+        server = smtplib.SMTP_SSL('smtp.zoho.com', 465)
 
-        # server.login('natanael@digimax.com.br', 'Renewsenha2024')
-        # server.sendmail(sender, [cidade[0][1],'vitorianoduomariana@gmail.com'], msg.as_string())
+        server.login('', '')
+        server.sendmail(sender, [cidade[0][1],'vitorianoduomariana@gmail.com'], msg.as_string())
         
     except Exception as e:
         print(f"Erro ao enviar email: {e}")
 
-    # finally:
-    #     server.quit()
+    finally:
+        server.quit()
 
 for cidade in listaCidades:
     pegarDataDoPortal(cidade)
     validarDataPortal(cidade)
 
 os.system("PAUSE")
-# giuliano@digimax.com.br
