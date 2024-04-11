@@ -57,7 +57,6 @@ def pegarDataDoPortal(cidade):
         
         dados.append(datasAux)
         
-    
     return cidade
     
 def validarDataPortal(cidade):
