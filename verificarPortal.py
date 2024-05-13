@@ -3,6 +3,7 @@ import holidays
 import datetime
 import smtplib
 import os
+from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.header import Header
 from email.utils import formataddr
@@ -105,29 +106,43 @@ def enviarEmail(cidade):
         ultimaDespesa = ""
         ultimaServidor = ""
         if(cidade[0][6] and cidade[0][5]):
-            ultimaDataReceita = "Receitas:\n  Ultima data cadastrada: " + max(sorted(cidade[0][5])).strftime("%d/%m/%Y") + "\n\n\n"
+            ultimaDataReceita = "Receitas - \n  Ultima data cadastrada: " + max(sorted(cidade[0][5])).strftime("%d/%m/%Y") + ".\n\n"
             
         if(cidade[1][6] and cidade[1][5]):
-            ultimaDespesa = "Despesas:\n  Ultima data cadastrada: " + max(sorted(cidade[1][5])).strftime("%d/%m/%Y") + "\n\n\n"
+            ultimaDespesa = "Despesas - \n  Ultima data cadastrada: " + max(sorted(cidade[1][5])).strftime("%d/%m/%Y") + ".\n\n"
         
         if not cidade[2][5] and cidade[2][6]:
-            ultimaServidor = "Servidores:\n  Nenhum dado para o mês " + mes + '/' + ano +" \n"
-            
+            ultimaServidor = "Servidores - \n  Nenhum dado para o mês " + mes + '/' + ano +". \n"
+        
         print(ultimaDataReceita + ultimaDespesa + ultimaServidor)
+        msgDoEmail = ultimaDataReceita + ultimaDespesa + ultimaServidor
             
-        sender = 'natanael@digimax.com.br'
+        sender = ''
         sender_title = "Digimax"
         recipient = cidade[0][1]
         
-        msg = MIMEText( ultimaDataReceita  + ultimaDespesa +  ultimaServidor, 'plain', 'utf-8')
+        msg = MIMEMultipart("alternative")
+        
+        # msg = MIMEText("Verificar a sincronização dos dados.\n\n" + ultimaDataReceita  + ultimaDespesa +  ultimaServidor, 'plain', 'utf-8')
         msg['Subject'] =  Header("PORTAL DE TRANSPARENCIA DA " + ("PREFEITURA " if cidade[0][3] == 'p' else 'CAMARA ') + ('DE ' + cidade[0][4]) + ' ' + str(hoje.strftime("%d/%m/%Y")), 'utf-8')
         msg['From'] = formataddr((str(Header(sender_title, 'utf-8')), sender))
         msg['To'] = recipient
-
+        
+        html = """
+            <html>
+            <body>
+                <p><b>Verificar sincronização dos dados.</b></p>
+                {}
+            </body>
+            </html>
+            """.format(msgDoEmail.replace(".", "<br><br>").replace("- ",":<br>"))
+            
+        part = MIMEText(html, "html")
+        msg.attach(part)
         server = smtplib.SMTP_SSL('smtp.zoho.com', 465)
 
         server.login('', '')
-        server.sendmail(sender, [cidade[0][1],'vitorianoduomariana@gmail.com'], msg.as_string())
+        server.sendmail(sender, [cidade[0][1],''], msg.as_string())
         
     except Exception as e:
         print(f"Erro ao enviar email: {e}")
