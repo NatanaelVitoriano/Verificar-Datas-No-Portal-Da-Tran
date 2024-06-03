@@ -10,14 +10,15 @@ from email.utils import formataddr
 from bs4 import BeautifulSoup
 from cidades import listaCidades, mes, ano, hoje
 
-listaDeFeriadosDoAno = []
-feriados = holidays.country_holidays("BR", subdiv="CE")
-feriadoDoAno= feriados["2024-01-01":"2024-12-31"]
+listaDeFeriadosDoAno = [datetime.date(2024, 5, 30), datetime.date(2024, 11, 20)]
+# datetime.date(2025, 3, 3), datetime.date(2025, 3, 4),datetime.date(2025, 3, 5), datetime.date(2025, 3, 19), datetime.date(2025, 3, 25), datetime.date(2025, 6, 19),datetime.date(2025, 8, 15)
+feriadosCE = holidays.country_holidays("BR", subdiv="CE")
+feriadoDoAnoBR = feriadosCE["2024-01-01":"2024-12-31"]
 sem = ("Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo")
 
-for feriado in feriadoDoAno:
-    listaDeFeriadosDoAno.append(feriado)
-    
+for feriadoBR in feriadoDoAnoBR:
+    listaDeFeriadosDoAno.append(feriadoBR)
+
 def pegarDataDoPortal(cidade):
     for dados in cidade:
         datasAux = []
@@ -78,8 +79,16 @@ def validarDataPortal(cidade):
             erro = True
             dados.append(True)
 
-        elif dados[3] == 'c' and dados[2] != 's':
+        elif dados[3] == 'c' and dados[2] == 'd':
             if (hoje.day >= 10) and (auxData.month != max(sorted(dados[5])).month):
+                erro = True
+                dados.append(True)
+                
+            else:
+                dados.append(False)
+        
+        elif dados[3] == 'c' and dados[2] == 'r':
+            if (hoje.day >= 15) and (auxData.month != max(sorted(dados[5])).month):
                 erro = True
                 dados.append(True)
                 
